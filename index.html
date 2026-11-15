@@ -41,17 +41,24 @@ var CONFIG = {
   direccion: "Blvd. Francisco I. Madero 1234, Col. Centro, Culiacán, Sin. (demo)",
   mapsUrl: "https://maps.google.com/?q=Culiacan,Sinaloa",
   mapaBusqueda: "Centro, Culiacán, Sinaloa",
-  instagram: "https://instagram.com/",
-  tiktok: "https://www.tiktok.com/",
+  instagram: "https://www.instagram.com/evanlux.ia/",
+  tiktok: "https://www.tiktok.com/@evanlux.ia",
   transferencia: {
-    banco: "BBVA",
-    titular: "Mariscos La Marea (demo)",
+    banco: "Cuenta de ejemplo",
+    titular: "DEMO · no transferir",
     clabe: "012345678901234567"
   },
   // textos que corren en las cintas cruzadas debajo de la portada
   cintas: {
     amarilla: ["Aguachiles", "Torres", "Tostadas", "Zarandeados", "Cócteles", "Pide por WhatsApp"],
     roja: ["Puro mar", "Recién preparado", "Bien frío", "Efectivo o transferencia", "A domicilio"]
+  },
+  // barra de demo arriba y crédito abajo (null en menús de clientes reales)
+  demo: {
+    texto: "Menú demo · ¿Quieres uno así para tu negocio?",
+    whatsapp: "526673473354",
+    marca: "Evan Lux",
+    mensaje: "Hola Evan, vi el demo del menú digital de Mariscos La Marea y me interesa uno para mi negocio."
   },
   colores: {
     fondo: "#061419",
@@ -440,9 +447,14 @@ textarea.in{resize:none;min-height:70px}
   #ficha .sh-foot{grid-area:foot;padding:18px 28px 22px}
   #ficha .btn{font-size:22px;padding:17px 26px}
 }
+.demo-bar{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 10px;padding:9px 14px;padding-top:calc(9px + var(--safe-t));background:var(--acc);color:#0b0b0b;font-size:13px;font-weight:600;text-decoration:none;text-align:center;line-height:1.35;position:relative;z-index:5}
+.demo-bar[hidden]{display:none}
+.demo-bar b{white-space:nowrap;text-decoration:underline}
+.credito{display:inline-block;margin-top:10px;color:var(--acc);text-decoration:none;letter-spacing:.06em}
 </style>
 </head>
 <body>
+<a class="demo-bar" id="demoBar" hidden target="_blank" rel="noopener"></a>
 <div class="fx-prog" id="prog"></div>
 
 <!-- HERO -->
@@ -577,8 +589,14 @@ function pintar() {
     '<a class="chip" href="' + esc(CONFIG.mapsUrl) + '" target="_blank" rel="noopener">🗺️ Cómo llegar</a>' +
     (CONFIG.instagram ? '<a class="chip" href="' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">📸 Instagram</a>' : "") +
     (CONFIG.tiktok ? '<a class="chip" href="' + esc(CONFIG.tiktok) + '" target="_blank" rel="noopener">🎵 TikTok</a>' : "");
+  if (CONFIG.demo) {
+    var wl = "https://wa.me/" + CONFIG.demo.whatsapp + "?text=" + encodeURIComponent(CONFIG.demo.mensaje);
+    $("demoBar").hidden = false; $("demoBar").href = wl;
+    $("demoBar").innerHTML = "<span>🧪 " + esc(CONFIG.demo.texto) + "</span><b>Escríbeme →</b>";
+  }
   $("foot").textContent = "© " + new Date().getFullYear() + " · " + CONFIG.nombre + " · " + CONFIG.eslogan.toUpperCase();
   document.title = CONFIG.nombre + " · Menú";
+  if (CONFIG.demo) $("foot").innerHTML = esc($("foot").textContent) + '<br><a class="credito" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.demo.whatsapp + "?text=" + encodeURIComponent(CONFIG.demo.mensaje) + '">Menú digital hecho por ' + esc(CONFIG.demo.marca) + " · ¿Quieres uno?</a>";
 
   $("cats").innerHTML = MENU.map(function (c) { return '<a class="cat" href="#' + c.id + '" data-c="' + c.id + '">' + esc(c.t) + "</a>"; }).join("");
   $("menu").innerHTML = MENU.map(function (c) {
